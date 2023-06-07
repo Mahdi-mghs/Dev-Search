@@ -1,0 +1,86 @@
+{% extends 'main.html' %}
+
+{% block content %}
+<main class="singleProject my-md">
+    <div class="container">
+      <div class="layout">
+        <div class="column column--1of3">
+          <h3 class="singleProject__subtitle">Tools & Stacks</h3>
+          <div class="singleProject__toolStack">
+            {% for ta in tag %}
+            <span class="tag tag--pill tag--sub tag--lg">
+              <small>{{ta}}</small>
+            </span>
+            {% endfor %}
+          </div>
+          {% if part.source_link %}
+          <a class="singleProject__liveLink" href="{{part.source_link}}" target="_blank"><i class="im im-external-link"></i>Source Code
+          </a>
+          {% endif %}
+        </div>
+        <div class="column column--2of3">
+          <img class="singleProject__preview" src="{{ part.ImgURL }}" alt="portfolio thumbnail" />
+          <a href="{% url 'single-pf' part.owner.id %}" class="singleProject__developer">{{part.owner.name}}</a>
+          <h2 class="singleProject__title">{{part.title}}</h2>
+          <h3 class="singleProject__subtitle">About the Project</h3>
+          <div class="singleProject__info">
+            {{part.description}}
+
+            <br />
+            <br />
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Hic voluptates earum possimus a perferendis culpa
+            omnis, libero quae soluta, obcaecati amet. Quam earum ad qui reprehenderit eligendi porro ab possimus
+            fugit voluptatem rerum eius sapiente, nemo mollitia aperiam suscipit culpa corrupti officiis dicta soluta
+            ut similique! Iste soluta quae tempora alias assumenda? Nam nesciunt nihil enim tempore cum quo
+            architecto?
+          </div>
+
+          <div class="comments">
+            <h3 class="singleProject__subtitle">Feedback</h3>
+            <h5 class="project--rating">
+              {{part.vote_ratio}}% Postitive Feedback ({{part.vote_total}} Votes)
+            </h5>
+            {% if request.user.profile.id in part.reviewers %}
+            <p>You have already submitted a comment</p>
+            {% elif request.user.profile == part.owner %}
+            <p>You can not vote your project!</p>
+            {% elif request.user.is_authenticated %}
+            <form class="form" action="{% url 'sproject' part.id %}" method="POST">
+              {% csrf_token %}
+              {% for field in form %}
+              <div class="form__field">
+                <label for="formInput#text">{{field.label}}</label>
+                {{field}}
+              </div>
+              {% endfor %}
+              <input class="btn btn--sub btn--lg" type="submit" value="Add Review" />
+            </form>
+            {% else %}
+            <p>you should first <a href="{% url 'login' %}?next={{request.path}}">Login</a></p>
+            {% endif %}
+            <div class="commentList">
+              {% for ouser in part.review_set.all %}
+              {% if ouser.body %}
+              <div class="comment">
+                <a href="{% url 'single-pf' ouser.owner.id %}">
+                  <img class="avatar avatar--md"
+                    src="{{ouser.owner.profile_img.url}}" alt="user" />
+                </a>
+                <div class="comment__details">
+                  <a href="{% url 'single-pf' ouser.owner.id %}" class="comment__author">{{ouser.owner.name}}</a>
+                  <p class="comment__info">
+                    {{ouser.body}}
+                  </p>
+                </div>
+              </div>
+              {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </main>
+
+{% endblock content %}

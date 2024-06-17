@@ -1,5 +1,5 @@
 # Dev-Search
-One place for developer to showing their abilities
+An Amazing Place for developer to showing their abilities
 
 main project is (https://github.com/divanov11/Django-2021) and that's inherited 
 
